@@ -40,7 +40,11 @@ def respond(
         yield response
 
 """
-For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/chatinterface
+
+# WELCOME TO THE APP
+
+you bad
+
 """
 demo = gr.ChatInterface(
     respond,
