@@ -1,11 +1,13 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
-
+from transformers import pipeline
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
 
+
+localclient = pipeline("text-generation", model="HuggingFaceH4/zephyr-7b-beta")
 
 def respond(
     message,
@@ -14,6 +16,7 @@ def respond(
     max_tokens,
     temperature,
     top_p,
+    model,
 ):
     messages = [{"role": "system", "content": system_message}]
 
@@ -27,16 +30,28 @@ def respond(
 
     response = ""
 
-    for message in client.chat_completion(
-        messages,
-        max_tokens=max_tokens,
-        stream=True,
-        temperature=temperature,
-        top_p=top_p,
-    ):
-        token = message.choices[0].delta.content
+    if model == "inference":
 
-        response += token
+        for message in client.chat_completion(
+            messages,
+            max_tokens=max_tokens,
+            stream=True,
+            temperature=temperature,
+            top_p=top_p,
+        ):
+            token = message.choices[0].delta.content
+
+            response += token
+            yield response
+    else:
+        response = localclient(
+            message,
+            max_length=max_tokens,
+            temperature=temperature,
+            top_k=0,
+            top_p=top_p,
+        )[0]["generated_text"]
+
         yield response
 
 """
@@ -58,6 +73,16 @@ you bad
 #     )
     
 
+css = """
+<style>
+
+
+
+
+</style>
+
+
+"""
 
 
 with gr.Blocks() as demo:
@@ -85,6 +110,9 @@ with gr.Blocks() as demo:
                 step=0.05,
                 label="Top-p (nucleus sampling)",
             ),
+            gr.Radio(options=["Inference", "Local"], label="Model"),
+
+
         ],
     )
 
