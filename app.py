@@ -1,12 +1,12 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
 from transformers import pipeline
+import torch
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
-localclient = pipeline("text-generation", model="CausalLM/miniG", trust_remote_code=True)
-
+localclient = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
 # load_dotenv()
 
