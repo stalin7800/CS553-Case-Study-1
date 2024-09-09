@@ -32,7 +32,7 @@ def respond(
 
     response = ""
 
-    if model == "inference":
+    if not model:
 
         for message in client.chat_completion(
             messages,
@@ -46,13 +46,10 @@ def respond(
             response += token
             yield response
     else:
-        response = localclient(
-            message,
-            max_length=max_tokens,
-            temperature=temperature,
-            top_k=0,
-            top_p=top_p,
-        )[0]["generated_text"]
+        response = ''
+
+        for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
+            response += message['generated_text']
 
         yield response
 
