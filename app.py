@@ -119,13 +119,6 @@ def respond(
         yield response_html + f'<div class="bot">{response}</div>'
 
 
-"""
-
-# WELCOME TO THE APP
-
-you bad
-
-"""
 
 # with gr.Blocks() as block:
 #     gr.Markdown(
@@ -155,6 +148,12 @@ with gr.Blocks() as demo:
     gr.Markdown(
         '''
     # Welcome to APp
+
+    This is a simple chatbot that uses the Zephyr-7B model from Hugging Face.
+    The chatbot can respond to your messages and generate new text based on your input.
+    You can also provide a system message, set the maximum number of tokens to generate, and adjust the temperature and top-p sampling parameters.
+
+    Have Fun!
 
 
     '''
