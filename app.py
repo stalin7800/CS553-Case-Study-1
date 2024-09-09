@@ -10,7 +10,7 @@ client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
 
 # load_dotenv()
 
-localclient = pipeline("text-generation", model="CausalLM/miniG", trust_remote_code=True,token=load_dotenv()["token"])
+localclient = pipeline("text-generation", model="CausalLM/miniG", trust_remote_code=True)
 
 def respond(
     message,
