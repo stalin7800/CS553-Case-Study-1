@@ -1,16 +1,15 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
 from transformers import pipeline
-from dotenv import load_dotenv
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
+localclient = pipeline("text-generation", model="CausalLM/miniG", trust_remote_code=True)
 
 
 # load_dotenv()
 
-localclient = pipeline("text-generation", model="CausalLM/miniG", trust_remote_code=True)
 
 def respond(
     message,
