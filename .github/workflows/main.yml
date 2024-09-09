@@ -21,8 +21,8 @@ jobs:
 
     - name: Commit changes
       run: |
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
+        git config --global user.email "karate7800@gmail.com"
+        git config --global user.name "karate7800"
         git lfs track "*.bin"  # Track any binary files
         git add .
         git commit -m "Auto commit from GitHub Actions"
@@ -31,6 +31,6 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        git push https://karate7800:HF_TOKEN@huggingface.co/karate7800/test_553.git
+        git push https://karate7800:$HF_TOKEN@huggingface.co/karate7800/test_553.git
 
         
