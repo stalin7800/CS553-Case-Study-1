@@ -31,6 +31,6 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        git push https://huggingface.co/karate7800/test_553.git
+        git push https://karate7800:HF_TOKEN@huggingface.co/karate7800/test_553.git
 
         
