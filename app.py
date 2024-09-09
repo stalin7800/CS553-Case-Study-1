@@ -3,6 +3,8 @@ from huggingface_hub import InferenceClient
 from transformers import pipeline
 import torch
 
+# TODO GET DISCORD WEBHOOK TO SEND MSG
+
 #used reference from 
 """
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
