@@ -7,7 +7,7 @@ For more information on `huggingface_hub` Inference API support, please check th
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
 
 
-localclient = pipeline("text-generation", model="HuggingFaceH4/zephyr-7b-beta")
+localclient = pipeline("text-generation", model="HuggingFaceH4/miniG")
 
 def respond(
     message,
