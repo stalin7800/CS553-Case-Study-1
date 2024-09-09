@@ -112,7 +112,7 @@ with gr.Blocks() as demo:
                 step=0.05,
                 label="Top-p (nucleus sampling)",
             ),
-            gr.Checkbox(label='Use Local Model', default=False),
+            gr.Checkbox(label='Use Local Model', value=False),
 
 
         ],
