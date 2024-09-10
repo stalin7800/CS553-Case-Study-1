@@ -1,3 +1,24 @@
+# name: Discord Notification
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   notify:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Send Discord Notification
+#         env:
+#           DISCORD_WEBHOOK_URL: ${{secrets.DISCORD_WEBHOOK_URL }}
+
+#         run: |
+#           curl -X POST -H "Content-Type: application/json" \
+#           -d "{\"content\": \"A new commit was pushed to the main branch by $GITHUB_ACTOR. \"}" \
+#           $DISCORD_WEBHOOK_URL
+    
+
 name: Discord Notification
 
 on:
@@ -11,10 +32,19 @@ jobs:
     steps:
       - name: Send Discord Notification
         env:
-          DISCORD_WEBHOOK_URL: ${{secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
         run: |
+          # Get all modified files from the last commit
+          MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})
+
+          # Create the message content
+          MESSAGE="A new commit was pushed to the main branch by $GITHUB_ACTOR.\n"
+          MESSAGE+="Commit message: '${{ github.event.head_commit.message }}'.\n"
+          MESSAGE+="Modified files:\n"
+          MESSAGE+="$MODIFIED_FILES"
+
+          # Send the message to Discord
           curl -X POST -H "Content-Type: application/json" \
-          -d "{\"content\": \"A new commit was pushed to the main branch by $GITHUB_ACTOR. \"}" \
+          -d "{\"content\": \"$MESSAGE\"}" \
           $DISCORD_WEBHOOK_URL
-    
