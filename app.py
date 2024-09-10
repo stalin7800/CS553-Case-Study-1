@@ -15,55 +15,6 @@ localclient = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", to
 # load_dotenv()
 
 
-# def respond(
-#     message,
-#     history: list[tuple[str, str]],
-#     system_message,
-#     max_tokens,
-#     temperature,
-#     top_p,
-#     model,
-# ):
-    
-#     response_html = ''
-#     messages = [{"role": "system", "content": system_message}]
-
-#     for val in history:
-#         if val[0]:
-#             messages.append({"role": "user", "content": val[0]})
-#             response_html += f'<div class="user">{val[0]}</div>'
-
-#         if val[1]:
-#             messages.append({"role": "assistant", "content": val[1]})
-#             response_html += f'<div class="assistant">{val[1]}</div>'
-
-#     messages.append({"role": "user", "content": message})
-
-#     response = ""
-
-#     if not model:
-
-#         for message in client.chat_completion(
-#             messages,
-#             max_tokens=max_tokens,
-#             stream=True,
-#             temperature=temperature,
-#             top_p=top_p,
-#         ):
-#             token = message.choices[0].delta.content
-
-#             response += token
-            
-#             yield response
-#     else:
-#         response = ''
-
-#         for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
-#             response += message['generated_text']
-
-#         yield response_html + response
-
-
 def respond(
     message,
     history: list[tuple[str, str]],
@@ -73,29 +24,25 @@ def respond(
     top_p,
     model,
 ):
-    messages = [{"role": "system", "content": system_message}]
     
-    response_html = ""  # This will store the formatted HTML response
+    response_html = ''
+    messages = [{"role": "system", "content": system_message}]
 
-    # Loop through the history and format the messages with HTML classes
     for val in history:
         if val[0]:
-            # Format user messages
-            response_html += f'<div class="user">{val[0]}</div>'
             messages.append({"role": "user", "content": val[0]})
-        if val[1]:
-            # Format assistant/bot messages
-            response_html += f'<div class="bot">{val[1]}</div>'
-            messages.append({"role": "assistant", "content": val[1]})
+            response_html += f'<div class="user">{val[0]}</div>'
 
-    # Append the new user message
+        if val[1]:
+            messages.append({"role": "assistant", "content": val[1]})
+            response_html += f'<div class="assistant">{val[1]}</div>'
+
     messages.append({"role": "user", "content": message})
-    response_html += f'<div class="user">{message}</div>'
 
     response = ""
 
-    # Handling for model-less case
     if not model:
+
         for message in client.chat_completion(
             messages,
             max_tokens=max_tokens,
@@ -104,44 +51,81 @@ def respond(
             top_p=top_p,
         ):
             token = message.choices[0].delta.content
-            response += token
 
-            # Yield both HTML and the updated response as it is generated
-            yield response_html + f'<div class="bot">{response}</div>'
-    
-    # Handling for model-based case
+            response += token
+            
+            yield response
     else:
-        response = ""
+        response = ''
+
         for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
             response += message['generated_text']
-            
-        # Yield the final HTML response
-        yield response_html + f'<div class="bot">{response}</div>'
+
+        yield response_html + response
 
 
-
-# with gr.Blocks() as block:
-#     gr.Markdown(
-#         """
-#         # Welcome to the Chatbot App!
-#         This is a simple chatbot that uses the Zephyr-7B model from Hugging Face. 
-#         The chatbot can respond to your messages and generate new text based on your input. 
-#         You can also provide a system message, set the maximum number of tokens to generate, and adjust the temperature and top-p sampling parameters.
-#         """
-#     )
+# def respond(
+#     message,
+#     history: list[tuple[str, str]],
+#     system_message,
+#     max_tokens,
+#     temperature,
+#     top_p,
+#     model,
+# ):
+#     messages = [{"role": "system", "content": system_message}]
     
+#     response_html = ""  # This will store the formatted HTML response
+
+#     # Loop through the history and format the messages with HTML classes
+#     for val in history:
+#         if val[0]:
+#             # Format user messages
+#             response_html += f'<div class="user">{val[0]}</div>'
+#             messages.append({"role": "user", "content": val[0]})
+#         if val[1]:
+#             # Format assistant/bot messages
+#             response_html += f'<div class="bot">{val[1]}</div>'
+#             messages.append({"role": "assistant", "content": val[1]})
+
+#     # Append the new user message
+#     messages.append({"role": "user", "content": message})
+#     response_html += f'<div class="user">{message}</div>'
+
+#     response = ""
+
+#     # Handling for model-less case
+#     if not model:
+#         for message in client.chat_completion(
+#             messages,
+#             max_tokens=max_tokens,
+#             stream=True,
+#             temperature=temperature,
+#             top_p=top_p,
+#         ):
+#             token = message.choices[0].delta.content
+#             response += token
+
+#             # Yield both HTML and the updated response as it is generated
+#             yield response_html + f'<div class="bot">{response}</div>'
+    
+#     # Handling for model-based case
+#     else:
+#         response = ""
+#         for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
+#             response += message['generated_text']
+            
+#         # Yield the final HTML response
+#         yield response_html + f'<div class="bot">{response}</div>'
+
+
+
 
 css = """
-<style>
 
 body {
     background-color: red;
 }
-
-
-
-
-</style>
 
 
 """
@@ -151,7 +135,7 @@ with gr.Blocks(css=css) as demo:
 
     gr.Markdown(
         '''
-    # Welcome to APp
+    # Welcome to  this product!
 
     This is a simple chatbot that uses the Zephyr-7B model from Hugging Face.
     The chatbot can respond to your messages and generate new text based on your input.
