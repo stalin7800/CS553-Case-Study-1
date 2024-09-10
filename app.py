@@ -147,7 +147,7 @@ body {
 """
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(css=css) as demo:
 
     gr.Markdown(
         '''
