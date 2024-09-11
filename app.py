@@ -123,16 +123,31 @@ def respond(
 
 css = """
 
-body {
-    background-color: #990000;
+body, #root, .gradio-container {
+    background-color: #800000 !important;
+    color: white;
 }
 
+#logo {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
 
 """
 
 
 with gr.Blocks(css=css) as demo:
 
+    # Add logo at the top left corner
+    with gr.Row():
+        gr.Image(
+            value="wpilogo.png",  # Replace with the path or URL to your logo image
+            label=None,
+            elem_id="logo",
+            width=50,  # Adjust size as needed
+        )
+    
     gr.Markdown(
         '''
     # Welcome to  the WPI ChatBot!
