@@ -3,7 +3,6 @@ from huggingface_hub import InferenceClient
 from transformers import pipeline
 import torch
 
-# TODO GET DISCORD WEBHOOK TO SEND MSG
 
 #used reference from 
 """
