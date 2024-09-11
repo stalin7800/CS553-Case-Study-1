@@ -124,7 +124,7 @@ def respond(
 css = """
 
 body {
-    background-color: red;
+    background-color: #990000;
 }
 
 
@@ -135,11 +135,12 @@ with gr.Blocks(css=css) as demo:
 
     gr.Markdown(
         '''
-    # Welcome to  this product!
+    # Welcome to  the WPI ChatBot!
 
     This is a simple chatbot that uses the Zephyr-7B model from Hugging Face.
     The chatbot can respond to your messages and generate new text based on your input.
     You can also provide a system message, set the maximum number of tokens to generate, and adjust the temperature and top-p sampling parameters.
+    The purpose of this chatbot is to aid WPI students with all questions related to WPI. This can range from degree requirements to student clubs.
 
     Have Fun!
 
