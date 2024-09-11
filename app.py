@@ -124,7 +124,7 @@ def respond(
 css = """
 
 body, #root, .gradio-container {
-    background-color: #800000 !important;
+    background-color: #C4122E !important;
     color: white;
 }
 
