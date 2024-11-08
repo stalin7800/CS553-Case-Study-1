@@ -14,11 +14,8 @@ RUN apt-get update && \
     apt-get install -yq --no-install-recommends \
     prometheus-node-exporter 
 
-RUN apk add curl
-
 # Expose the port for gradio
 EXPOSE 7860 
-
 EXPOSE 8000
 EXPOSE 9100
 
