@@ -2,6 +2,14 @@ import gradio as gr
 from huggingface_hub import InferenceClient
 from transformers import pipeline
 import torch
+from prometheus_client import start_http_server, Summary, Counter
+
+REQUEST_COUNTER = Counter('request_counter', 'Number of requests')
+SUCCESS_COUNTER = Counter('success_counter', 'Number of successful requests')
+FAILURE_COUNTER = Counter('failure_counter', 'Number of failed requests')
+DURATION = Summary('request_latency_seconds', 'Request latency in seconds')
+API_CALLS = Counter('api_calls', 'Number of API calls')
+LOCAL_CALLS = Counter('local_calls', 'Number of local calls')
 
 
 #used reference from 
@@ -23,44 +31,56 @@ def respond(
     top_p,
     model,
 ):
+
+    REQUEST_COUNTER.inc()
+    request_timer = DURATION.time()
     
-    response_html = ''
-    messages = [{"role": "system", "content": system_message}]
+    try:
+        response_html = ''
+        messages = [{"role": "system", "content": system_message}]
+    
+        for val in history:
+            if val[0]:
+                messages.append({"role": "user", "content": val[0]})
+                response_html += f'<div class="user">{val[0]}</div>'
+    
+            if val[1]:
+                messages.append({"role": "assistant", "content": val[1]})
+                response_html += f'<div class="assistant">{val[1]}</div>'
+    
+        messages.append({"role": "user", "content": message})
+    
+        response = ""
+    
+        if not model:
+    
+            for message in client.chat_completion(
+                messages,
+                max_tokens=max_tokens,
+                stream=True,
+                temperature=temperature,
+                top_p=top_p,
+            ):
+                token = message.choices[0].delta.content
+    
+                response += token
 
-    for val in history:
-        if val[0]:
-            messages.append({"role": "user", "content": val[0]})
-            response_html += f'<div class="user">{val[0]}</div>'
-
-        if val[1]:
-            messages.append({"role": "assistant", "content": val[1]})
-            response_html += f'<div class="assistant">{val[1]}</div>'
-
-    messages.append({"role": "user", "content": message})
-
-    response = ""
-
-    if not model:
-
-        for message in client.chat_completion(
-            messages,
-            max_tokens=max_tokens,
-            stream=True,
-            temperature=temperature,
-            top_p=top_p,
-        ):
-            token = message.choices[0].delta.content
-
-            response += token
-            
-            yield response
-    else:
-        response = ''
-
-        for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
-            response += message['generated_text']
-
-        yield response_html + response
+                API_CALLS.inc()
+                yield response
+        else:
+            response = ''
+    
+            for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
+                response += message['generated_text']
+                
+            LOCAL_CALLS.inc()
+            yield response_html + response
+        SUCCESS_COUNTER.inc()
+    except Exception as e:
+        FAILURE_COUNTER.inc()
+        yield f"An error occured: {e}"
+    finally:
+        request_timer.observe_duration()
 
 def test_respond():
     test = respond('Hello!',[],'You only respond hello.',5,1,1.5,False)
@@ -70,60 +90,6 @@ def test_respond():
 
     assert type(test) == dict
 
-
-# def respond(
-#     message,
-#     history: list[tuple[str, str]],
-#     system_message,
-#     max_tokens,
-#     temperature,
-#     top_p,
-#     model,
-# ):
-#     messages = [{"role": "system", "content": system_message}]
-    
-#     response_html = ""  # This will store the formatted HTML response
-
-#     # Loop through the history and format the messages with HTML classes
-#     for val in history:
-#         if val[0]:
-#             # Format user messages
-#             response_html += f'<div class="user">{val[0]}</div>'
-#             messages.append({"role": "user", "content": val[0]})
-#         if val[1]:
-#             # Format assistant/bot messages
-#             response_html += f'<div class="bot">{val[1]}</div>'
-#             messages.append({"role": "assistant", "content": val[1]})
-
-#     # Append the new user message
-#     messages.append({"role": "user", "content": message})
-#     response_html += f'<div class="user">{message}</div>'
-
-#     response = ""
-
-#     # Handling for model-less case
-#     if not model:
-#         for message in client.chat_completion(
-#             messages,
-#             max_tokens=max_tokens,
-#             stream=True,
-#             temperature=temperature,
-#             top_p=top_p,
-#         ):
-#             token = message.choices[0].delta.content
-#             response += token
-
-#             # Yield both HTML and the updated response as it is generated
-#             yield response_html + f'<div class="bot">{response}</div>'
-    
-#     # Handling for model-based case
-#     else:
-#         response = ""
-#         for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
-#             response += message['generated_text']
-            
-#         # Yield the final HTML response
-#         yield response_html + f'<div class="bot">{response}</div>'
 
 
 
@@ -197,4 +163,5 @@ with gr.Blocks(css=css) as demo:
 
 
 if __name__ == "__main__":
+    start_http_server(8000)
     demo.launch()
