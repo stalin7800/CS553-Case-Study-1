@@ -2,7 +2,7 @@ import gradio as gr
 from huggingface_hub import InferenceClient
 from transformers import pipeline
 import torch
-from prometheus_client import start_http_server, Summary, Counter
+from prometheus_client import start_http_server, Summary, Counter, Gauge
 
 REQUEST_COUNTER = Counter('request_counter', 'Number of requests')
 SUCCESS_COUNTER = Counter('success_counter', 'Number of successful requests')
@@ -164,4 +164,4 @@ with gr.Blocks(css=css) as demo:
 
 if __name__ == "__main__":
     start_http_server(8000)
-    demo.launch()
+    demo.launch(share = False)
