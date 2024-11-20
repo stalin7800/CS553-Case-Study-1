@@ -1,7 +1,7 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
 from transformers import pipeline
-import torch
+#import torch
 from prometheus_client import start_http_server, Summary, Counter, Gauge
 
 REQUEST_COUNTER = Counter('request_counter', 'Number of requests')
