@@ -17,7 +17,7 @@ LOCAL_CALLS = Counter('local_calls', 'Number of local calls')
 For more information on `huggingface_hub` Inference API support, please check the docs: https://huggingface.co/docs/huggingface_hub/v0.22.2/en/guides/inference
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
-localclient = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
+#localclient = pipeline("text-generation", "microsoft/Phi-3-mini-4k-instruct", torch_dtype=torch.bfloat16, device_map="auto")
 
 # load_dotenv()
 
@@ -67,14 +67,14 @@ def respond(
 
                 API_CALLS.inc()
                 yield response
-        else:
-            response = ''
+        #else:
+          #  response = ''
     
-            for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
-                response += message['generated_text']
+           # for message in localclient(message, max_length=max_tokens, temperature=temperature, top_p=top_p):
+           #     response += message['generated_text']
                 
-            LOCAL_CALLS.inc()
-            yield response_html + response
+          #  LOCAL_CALLS.inc()
+          #  yield response_html + response
         SUCCESS_COUNTER.inc()
     except Exception as e:
         FAILURE_COUNTER.inc()
