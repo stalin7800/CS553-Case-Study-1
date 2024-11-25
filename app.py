@@ -1,15 +1,15 @@
 import gradio as gr
 from huggingface_hub import InferenceClient
-from transformers import pipeline
-#import torch
-from prometheus_client import start_http_server, Summary, Counter, Gauge
+# from transformers import pipeline
+# import torch
+# from prometheus_client import start_http_server, Summary, Counter, Gauge
 
-REQUEST_COUNTER = Counter('request_counter', 'Number of requests')
-SUCCESS_COUNTER = Counter('success_counter', 'Number of successful requests')
-FAILURE_COUNTER = Counter('failure_counter', 'Number of failed requests')
-DURATION = Summary('request_latency_seconds', 'Request latency in seconds')
-API_CALLS = Counter('api_calls', 'Number of API calls')
-LOCAL_CALLS = Counter('local_calls', 'Number of local calls')
+# REQUEST_COUNTER = Counter('request_counter', 'Number of requests')
+# SUCCESS_COUNTER = Counter('success_counter', 'Number of successful requests')
+# FAILURE_COUNTER = Counter('failure_counter', 'Number of failed requests')
+# DURATION = Summary('request_latency_seconds', 'Request latency in seconds')
+# API_CALLS = Counter('api_calls', 'Number of API calls')
+# LOCAL_CALLS = Counter('local_calls', 'Number of local calls')
 
 
 #used reference from 
@@ -32,8 +32,8 @@ def respond(
     model,
 ):
 
-    REQUEST_COUNTER.inc()
-    request_timer = DURATION.time()
+    # REQUEST_COUNTER.inc()
+    # request_timer = DURATION.time()
     
     try:
         response_html = ''
@@ -65,7 +65,7 @@ def respond(
     
                 response += token
 
-                API_CALLS.inc()
+                # API_CALLS.inc()
                 yield response
         #else:
           #  response = ''
@@ -75,12 +75,12 @@ def respond(
                 
           #  LOCAL_CALLS.inc()
           #  yield response_html + response
-        SUCCESS_COUNTER.inc()
+        # SUCCESS_COUNTER.inc()
     except Exception as e:
-        FAILURE_COUNTER.inc()
+        # FAILURE_COUNTER.inc()
         yield f"An error occured: {e}"
-    finally:
-        request_timer.observe_duration()
+    # finally:
+    #     request_timer.observe_duration()
 
 def test_respond():
     test = respond('Hello!',[],'You only respond hello.',5,1,1.5,False)
@@ -163,5 +163,5 @@ with gr.Blocks(css=css) as demo:
 
 
 if __name__ == "__main__":
-    start_http_server(8000)
+    # start_http_server(8000)
     demo.launch(share = False)
